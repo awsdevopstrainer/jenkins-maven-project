@@ -13,7 +13,8 @@ pipeline {
                     echo "Validated successfully....."
                 }
             }
-        }        stage('Build') {
+        }        
+        stage('Build') {
             steps {
                 sh 'mvn -f hello-app/pom.xml -B -DskipTests clean compile'
             }
