@@ -1,14 +1,25 @@
 pipeline {
     agent any
+    tools {
+        maven "maven3-9-16"
+    }
     stages {
-        stage('Build') {
+        stage('Validate') {
             steps {
-                sh 'mvn -f hello-app/pom.xml -B -DskipTests clean package'
+                sh 'mvn -f hello-app/pom.xml -B -DskipTests clean validate'
             }
             post {
                 success {
-                    echo "Now Archiving the Artifacts....."
-                    archiveArtifacts artifacts: '**/*.jar'
+                    echo "Validated successfully....."
+                }
+            }
+        }        stage('Build') {
+            steps {
+                sh 'mvn -f hello-app/pom.xml -B -DskipTests clean compile'
+            }
+            post {
+                success {
+                    echo "Compiled successfully....."
                 }
             }
         }
@@ -22,5 +33,16 @@ pipeline {
                 }
             }
         }
+        stage('Package') {
+            steps {
+                sh 'mvn -f hello-app/pom.xml -B -DskipTests clean package'
+            }
+            post {
+                success {
+                    echo "Now Archiving the Artifacts....."
+                    archiveArtifacts artifacts: '**/*.jar'
+                }
+            }
+        }        
     }
 }
